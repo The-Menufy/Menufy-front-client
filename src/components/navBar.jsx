@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, User, Menu, X } from "lucide-react"; // Ajout de l'icône Hamburger
 
@@ -8,11 +8,9 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token
-    localStorage.removeItem("role");  // Remove role
+    localStorage.removeItem("role"); // Remove role
     navigate("/login"); // Redirect to login page
   };
-  
-  
 
   return (
     <nav className="fixed top-0 left-0 w-full px-6 md:px-12 py-4 flex items-center justify-between bg-transparent z-50">

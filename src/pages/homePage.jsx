@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Button from "../components/Button";
 import BlurContainer from "../components/blurContainer";
@@ -28,10 +28,14 @@ const HomePage = () => {
         setProducts(data);
         setFilteredProducts(data);
         // Extract unique typePlat values
-        const uniqueTypePlats = [...new Set(data.map(product => product.typePlat))];
+        const uniqueTypePlats = [
+          ...new Set(data.map((product) => product.typePlat)),
+        ];
         setTypePlatOptions(uniqueTypePlats);
         if (data.length > 0 && data[0].photo) {
-          setMainImage(`http://${BACKEND_HOST}:${BACKEND_PORT}${data[0].photo}`);
+          setMainImage(
+            `http://${BACKEND_HOST}:${BACKEND_PORT}${data[0].photo}`
+          );
         }
         setLoading(false);
       })
@@ -47,12 +51,14 @@ const HomePage = () => {
 
     // Apply typePlat filter
     if (typePlatFilter !== "all") {
-      filtered = filtered.filter(product => product.typePlat === typePlatFilter);
+      filtered = filtered.filter(
+        (product) => product.typePlat === typePlatFilter
+      );
     }
 
     // Apply search query filter
     if (searchQuery) {
-      filtered = filtered.filter(product =>
+      filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -168,7 +174,11 @@ const HomePage = () => {
                     <div
                       key={product._id}
                       className="bg-black/10 rounded-xl p-4 backdrop-blur-sm group hover:bg-black/20 transition-all flex flex-col items-center text-center"
-                      onMouseEnter={() => handleHover(`http://${BACKEND_HOST}:${BACKEND_PORT}${product.photo}`)}
+                      onMouseEnter={() =>
+                        handleHover(
+                          `http://${BACKEND_HOST}:${BACKEND_PORT}${product.photo}`
+                        )
+                      }
                     >
                       <div className="w-full aspect-square relative flex justify-center items-center">
                         {product.photo ? (
@@ -176,7 +186,9 @@ const HomePage = () => {
                             src={`http://${BACKEND_HOST}:${BACKEND_PORT}${product.photo}`}
                             alt={product.name}
                             className="w-full h-full object-cover rounded-lg"
-                            onError={(e) => (e.target.src = "/fallback-image.png")}
+                            onError={(e) =>
+                              (e.target.src = "/fallback-image.png")
+                            }
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">

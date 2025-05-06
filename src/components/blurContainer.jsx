@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from "prop-types";
 
 const BlurContainer = ({
   children,
@@ -45,6 +45,15 @@ const BlurContainer = ({
       {children}
     </div>
   );
+};
+
+BlurContainer.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  blur: PropTypes.oneOf(["sm", "md", "lg", "xl", "2xl", "3xl"]),
+  opacity: PropTypes.number,
+  padding: PropTypes.number,
+  rounded: PropTypes.oneOf(["none", "sm", "md", "lg", "xl", "2xl", "3xl"]),
 };
 
 export default BlurContainer;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { User, Mail, Lock } from "lucide-react";
 import BlurContainer from "../components/blurContainer";
 import Button from "../components/Button";

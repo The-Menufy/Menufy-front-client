@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const ProtectedRoute = ({ requiredRole }) => {
-  const { user } = useAuth(); // Assuming you have a context to store user data
+  const { user } = JSON.parse(localStorage.getItem("user")) || {};
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -12,6 +13,9 @@ const ProtectedRoute = ({ requiredRole }) => {
   }
 
   return <Outlet />;
+};
+ProtectedRoute.propTypes = {
+  requiredRole: PropTypes.string.isRequired,
 };
 
 export default ProtectedRoute;

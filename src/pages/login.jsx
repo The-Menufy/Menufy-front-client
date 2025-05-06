@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "../components/Button";
 import Footer from "../components/footer";
-
 
 function Login() {
   return (
@@ -17,7 +16,7 @@ function Login() {
 
       {/* Main Content */}
       <main className="relative flex-grow flex items-center justify-center sm:justify-start py-6 px-4 sm:px-6 lg:px-20">
-      <div className="w-full max-w-md sm:w-[480px] sm:h-[600px] p-10 rounded-2xl bg-white/10 backdrop-blur-xl mr-0 sm:mr-10 flex flex-col justify-between">
+        <div className="w-full max-w-md sm:w-[480px] sm:h-[600px] p-10 rounded-2xl bg-white/10 backdrop-blur-xl mr-0 sm:mr-10 flex flex-col justify-between">
           <div className="flex flex-col items-center space-y-6">
             <h1 className="text-3xl font-bold text-white pt-4">Sign in</h1>
 

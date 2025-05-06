@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import BlurContainer from "../components/blurContainer";
 import QRCodeGenerator from "../components/QRCodeGenerator";
-import { FRONTEND_HOST, FRONTEND_PORT, BACKEND_HOST, BACKEND_PORT } from "../config";
+import { BACKEND_HOST, BACKEND_PORT } from "../config";
 
 const MenuPage = () => {
   const [menus, setMenus] = useState([]);
@@ -49,7 +49,10 @@ const MenuPage = () => {
     const filledStars = Math.round(rate);
     const totalStars = 5;
     return Array.from({ length: totalStars }, (_, i) => (
-      <span key={i} className={i < filledStars ? "text-yellow-400" : "text-gray-400"}>
+      <span
+        key={i}
+        className={i < filledStars ? "text-yellow-400" : "text-gray-400"}
+      >
         {i < filledStars ? "★" : "☆"}
       </span>
     ));
@@ -76,9 +79,12 @@ const MenuPage = () => {
             <div className="flex flex-col space-y-10">
               <div className="flex flex-col md:flex-row items-center justify-between gap-8 px-4">
                 <div className="flex flex-col space-y-6 md:w-1/2 text-center md:text-left">
-                  <h1 className="text-3xl md:text-5xl font-bold text-white">Welcome to TheMenuFy!</h1>
+                  <h1 className="text-3xl md:text-5xl font-bold text-white">
+                    Welcome to TheMenuFy!
+                  </h1>
                   <p className="text-lg text-white">
-                    Manage your restaurant menus with ease and style. Customize, update in real-time, and enhance customer experiences.
+                    Manage your restaurant menus with ease and style. Customize,
+                    update in real-time, and enhance customer experiences.
                   </p>
                   <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
                     <Button
@@ -102,7 +108,9 @@ const MenuPage = () => {
                       transition={{ duration: 0.5, ease: "easeInOut" }}
                       onError={(e) => (e.target.src = "/fallback-image.png")}
                       onClick={() =>
-                        handleImageClick(menus.find((m) => m.photo === mainImage)._id)
+                        handleImageClick(
+                          menus.find((m) => m.photo === mainImage)._id
+                        )
                       }
                     />
                   ) : (
@@ -115,11 +123,17 @@ const MenuPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
                 {loading ? (
-                  <div className="col-span-full text-center text-white">Loading menus...</div>
+                  <div className="col-span-full text-center text-white">
+                    Loading menus...
+                  </div>
                 ) : error ? (
-                  <div className="col-span-full text-center text-red-500">{error}</div>
+                  <div className="col-span-full text-center text-red-500">
+                    {error}
+                  </div>
                 ) : menus.length === 0 ? (
-                  <div className="col-span-full text-center text-white">No menus available</div>
+                  <div className="col-span-full text-center text-white">
+                    No menus available
+                  </div>
                 ) : (
                   menus.map((item) => (
                     <div
@@ -133,7 +147,9 @@ const MenuPage = () => {
                             src={`http://${BACKEND_HOST}:${BACKEND_PORT}${item.photo}`}
                             alt={item.name}
                             className="w-full h-full object-cover rounded-lg cursor-pointer"
-                            onError={(e) => (e.target.src = "/fallback-image.png")}
+                            onError={(e) =>
+                              (e.target.src = "/fallback-image.png")
+                            }
                             onClick={() => handleImageClick(item._id)}
                           />
                         ) : (
@@ -144,7 +160,9 @@ const MenuPage = () => {
                       </div>
 
                       <div className="mt-4">
-                        <p className="text-sm font-medium text-white">{item.name}</p>
+                        <p className="text-sm font-medium text-white">
+                          {item.name}
+                        </p>
                         <p className="text-sm text-white">
                           {item.rate !== undefined && item.rate !== null
                             ? renderStarRating(item.rate)

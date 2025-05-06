@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Sun, Moon, Bell, Globe } from "lucide-react"; // Icônes
 import BlurContainer from "../components/blurContainer"; // Conteneur avec effet blur
 import Button from "../components/Button"; // Bouton stylisé

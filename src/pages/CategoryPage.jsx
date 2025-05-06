@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
@@ -104,12 +104,12 @@ const CategoryPage = () => {
                     Explore Our Categories
                   </h1>
                   <p className="text-lg text-white">
-                    Discover the variety of categories within your selected menu.
-                    Browse and enjoy a tailored dining experience.
+                    Discover the variety of categories within your selected
+                    menu. Browse and enjoy a tailored dining experience.
                   </p>
                   <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
                     <Button
-                      onClick={() => navigate('/Menus')}
+                      onClick={() => navigate("/Menus")}
                       className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-full transition-all"
                     >
                       Back to menus
@@ -128,7 +128,11 @@ const CategoryPage = () => {
                       exit={{ x: -direction * 100, opacity: 0 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
                       onError={(e) => (e.target.src = "/fallback-image.png")}
-                      onClick={() => handleImageClick(categories.find((c) => c.photo === mainImage)?._id)}
+                      onClick={() =>
+                        handleImageClick(
+                          categories.find((c) => c.photo === mainImage)?._id
+                        )
+                      }
                     />
                   ) : (
                     <div className="w-3/4 max-w-sm h-64 flex items-center justify-center bg-gray-200 rounded-xl">
@@ -163,7 +167,9 @@ const CategoryPage = () => {
                             src={`http://${BACKEND_HOST}:${BACKEND_PORT}${category.photo}`}
                             alt={category.libelle}
                             className="w-full h-full object-cover rounded-lg cursor-pointer"
-                            onError={(e) => (e.target.src = "/fallback-image.png")}
+                            onError={(e) =>
+                              (e.target.src = "/fallback-image.png")
+                            }
                             onClick={() => handleImageClick(category._id)}
                           />
                         ) : (
@@ -199,7 +205,9 @@ const CategoryPage = () => {
                     </button>
                   </div>
                   <div ref={printRef} className="text-black">
-                    <h1 className="text-2xl font-bold mb-4">📋 Menu & Categories Overview</h1>
+                    <h1 className="text-2xl font-bold mb-4">
+                      📋 Menu & Categories Overview
+                    </h1>
                     <div className="mb-6">
                       {mainImage && (
                         <img
@@ -220,8 +228,12 @@ const CategoryPage = () => {
                       ) : (
                         categories.map((category) => (
                           <div key={category._id} className="mb-6">
-                            <h3 className="text-lg font-semibold mb-2">📂 {category.libelle}</h3>
-                            <p className="mb-2 text-sm">{category.description || "No description"}</p>
+                            <h3 className="text-lg font-semibold mb-2">
+                              📂 {category.libelle}
+                            </h3>
+                            <p className="mb-2 text-sm">
+                              {category.description || "No description"}
+                            </p>
                             {category.photo && (
                               <img
                                 src={`http://${BACKEND_HOST}:${BACKEND_PORT}${category.photo}`}
@@ -246,7 +258,6 @@ const CategoryPage = () => {
                 </div>
               </div>
             )}
-
           </BlurContainer>
         </div>
       </div>

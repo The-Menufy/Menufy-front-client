@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { User, Mail, Lock, Edit3 } from "lucide-react"; // Icônes
 import BlurContainer from "../components/blurContainer"; // Réutilisation du composant
@@ -6,7 +6,6 @@ import Button from "../components/Button"; // Bouton stylisé
 import Footer from "../components/footer"; // Footer
 
 const Profile = () => {
-  
   return (
     <div className="flex flex-col min-h-screen">
       {/* Background Image */}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "../components/Button";
 import Footer from "../components/footer";
 
@@ -16,12 +16,8 @@ function Register() {
         <div className="w-full max-w-md sm:w-[480px] sm:h-auto p-10 rounded-2xl bg-white/10 backdrop-blur-xl flex flex-col justify-between">
           <div className="flex flex-col items-center space-y-6">
             <h1 className="text-3xl font-bold text-white">Create Account</h1>
-            { (
-              <p className="text-red-500 text-center w-full"></p>
-            )}
-            {(
-              <p className="text-green-500 text-center w-full"></p>
-            )}
+            {<p className="text-red-500 text-center w-full"></p>}
+            {<p className="text-green-500 text-center w-full"></p>}
             <form className="w-full space-y-5" onSubmit="">
               <div className="space-y-4">
                 <div>
