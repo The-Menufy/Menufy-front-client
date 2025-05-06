@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { User, Mail, Lock } from "lucide-react";
 import BlurContainer from "../components/blurContainer";
 import Button from "../components/Button";
@@ -10,7 +9,7 @@ const EditProfile = () => {
       <main className="flex-grow flex items-center justify-center py-12 px-6">
         <BlurContainer className="p-8 rounded-2xl bg-white/10 backdrop-blur-xl text-white">
           <h1 className="text-3xl font-bold text-center mb-6">Edit Profile</h1>
-          {<p className="text-red-500 text-center">""</p>}
+          {<p className="text-red-500 text-center">&quot;&quot;</p>}
           <form onSubmit="" className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center space-x-3 bg-white/10 p-4 rounded-lg">

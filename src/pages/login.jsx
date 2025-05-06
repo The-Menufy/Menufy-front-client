@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Button from "../components/Button";
 import Footer from "../components/footer";
 
@@ -21,7 +20,7 @@ function Login() {
             <h1 className="text-3xl font-bold text-white pt-4">Sign in</h1>
 
             {/* Display Error Message */}
-            {<p className="text-red-500 text-center w-full">""</p>}
+            {<p className="text-red-500 text-center w-full">&quot;&quot;</p>}
 
             {/* Login Form */}
             <form className="w-full max-w-sm space-y-6" onSubmit="">
@@ -34,7 +33,6 @@ function Login() {
                   <input
                     type="email"
                     value=""
-                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3 bg-white/10 border border-gray-300/30 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 text-white placeholder-gray-400"
                     placeholder="Enter your email"
                     required
@@ -49,7 +47,6 @@ function Login() {
                   <input
                     type="password"
                     value=""
-                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3 bg-white/10 border border-gray-300/30 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 text-white placeholder-gray-400"
                     placeholder="Enter your password"
                     required
@@ -96,7 +93,7 @@ function Login() {
 
           {/* Sign up link */}
           <div className="text-center mt-4">
-            <span className="text-white">Don't have an account? </span>
+            <span className="text-white">Don&apos;t have an account? </span>
             <a
               href="/register"
               className="text-yellow-500 hover:text-yellow-400 font-medium"
