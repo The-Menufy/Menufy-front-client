@@ -25,17 +25,13 @@ const HomePage = () => {
         return res.json();
       })
       .then((data) => {
-        setProducts(data);
-        setFilteredProducts(data);
+        setProducts(data || []);
+        setFilteredProducts(data || []);
         // Extract unique typePlat values
-        const uniqueTypePlats = [
-          ...new Set(data.map((product) => product.typePlat)),
-        ];
+        const uniqueTypePlats = [...new Set((data || []).map((product) => product.typePlat))].filter(Boolean);
         setTypePlatOptions(uniqueTypePlats);
-        if (data.length > 0 && data[0].photo) {
-          setMainImage(
-            `http://${BACKEND_HOST}:${BACKEND_PORT}${data[0].photo}`
-          );
+        if (data?.length > 0 && data[0].photo) {
+          setMainImage(data[0].photo); // Use Cloudinary URL directly
         }
         setLoading(false);
       })
@@ -59,7 +55,7 @@ const HomePage = () => {
     // Apply search query filter
     if (searchQuery) {
       filtered = filtered.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        product.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -67,7 +63,7 @@ const HomePage = () => {
   }, [typePlatFilter, searchQuery, products]);
 
   const handleHover = (newImage) => {
-    if (newImage !== mainImage) {
+    if (newImage !== mainImage && newImage) {
       setDirection(newImage > mainImage ? 1 : -1);
       setMainImage(newImage);
     }
@@ -79,6 +75,11 @@ const HomePage = () => {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
+  };
+
+  const getFallbackImage = (e) => {
+    e.target.src = "/fallback-image.png";
+    e.target.alt = "Image not available";
   };
 
   return (
@@ -115,21 +116,21 @@ const HomePage = () => {
                     </Button>
                   </div>
                 </div>
-                <div className="md:w-1/2 flex justify-center overflow-hidden">
+                <div className="md:w-1/2 flex justify-center">
                   {mainImage ? (
                     <motion.img
                       key={mainImage}
                       src={mainImage}
                       alt="Product Preview"
-                      className="w-3/4 max-w-sm rounded-xl object-contain"
+                      className="w-full max-w-md rounded-xl object-contain"
                       initial={{ x: direction * 100, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: -direction * 100, opacity: 0 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
-                      onError={(e) => (e.target.src = "/fallback-image.png")}
+                      onError={getFallbackImage}
                     />
                   ) : (
-                    <div className="w-3/4 max-w-sm h-64 flex items-center justify-center bg-gray-200 rounded-xl">
+                    <div className="w-full max-w-md h-64 flex items-center justify-center bg-gray-200 rounded-xl">
                       <p className="text-gray-500">No image available</p>
                     </div>
                   )}
@@ -142,31 +143,33 @@ const HomePage = () => {
                   onChange={handleSearchChange}
                   placeholder="Search by dish name..."
                   className="bg-black/30 text-white rounded-lg p-2 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full sm:w-64"
+                  aria-label="Search by dish name"
                 />
                 <select
                   value={typePlatFilter}
                   onChange={handleTypePlatChange}
                   className="bg-black/30 text-white rounded-lg p-2 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  aria-label="Filter by dish type"
                 >
                   <option value="all">All Types</option>
                   {typePlatOptions.map((type) => (
                     <option key={type} value={type}>
-                      {type}
+                      {type || "Unknown Type"}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
                 {loading ? (
-                  <div className="col-span-full text-center text-white">
+                  <div className="col-span-full text-center text-white" role="alert">
                     Loading products...
                   </div>
                 ) : error ? (
-                  <div className="col-span-full text-center text-red-500">
+                  <div className="col-span-full text-center text-red-500" role="alert">
                     {error}
                   </div>
                 ) : filteredProducts.length === 0 ? (
-                  <div className="col-span-full text-center text-white">
+                  <div className="col-span-full text-center text-white" role="alert">
                     No products available
                   </div>
                 ) : (
@@ -174,21 +177,15 @@ const HomePage = () => {
                     <div
                       key={product._id}
                       className="bg-black/10 rounded-xl p-4 backdrop-blur-sm group hover:bg-black/20 transition-all flex flex-col items-center text-center"
-                      onMouseEnter={() =>
-                        handleHover(
-                          `http://${BACKEND_HOST}:${BACKEND_PORT}${product.photo}`
-                        )
-                      }
+                      onMouseEnter={() => handleHover(product.photo || null)}
                     >
-                      <div className="w-full aspect-square relative flex justify-center items-center">
+                      <div className="w-full aspect-[4/3] relative flex justify-center items-center">
                         {product.photo ? (
                           <img
-                            src={`http://${BACKEND_HOST}:${BACKEND_PORT}${product.photo}`}
-                            alt={product.name}
+                            src={product.photo} // Use Cloudinary URL directly
+                            alt={product.name || "Product"}
                             className="w-full h-full object-cover rounded-lg"
-                            onError={(e) =>
-                              (e.target.src = "/fallback-image.png")
-                            }
+                            onError={getFallbackImage}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
@@ -198,7 +195,7 @@ const HomePage = () => {
                       </div>
                       <div className="mt-4">
                         <p className="text-sm font-medium text-white">
-                          {product.name}
+                          {product.name || "Unnamed Product"}
                         </p>
                         <p className="text-sm text-white">
                           ${product.price || "Price not available"}

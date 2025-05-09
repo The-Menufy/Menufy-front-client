@@ -21,9 +21,9 @@ const MenuPage = () => {
         return res.json();
       })
       .then((data) => {
-        setMenus(data);
-        if (data.length > 0 && data[0].photo) {
-          setMainImage(data[0].photo);
+        setMenus(data || []);
+        if (data?.length > 0 && data[0].photo) {
+          setMainImage(data[0].photo); // Use Cloudinary URL directly
         }
         setLoading(false);
       })
@@ -35,7 +35,7 @@ const MenuPage = () => {
   }, []);
 
   const handleHover = (newImage) => {
-    if (newImage !== mainImage) {
+    if (newImage !== mainImage && newImage) {
       setDirection(newImage > mainImage ? 1 : -1);
       setMainImage(newImage);
     }
@@ -52,10 +52,16 @@ const MenuPage = () => {
       <span
         key={i}
         className={i < filledStars ? "text-yellow-400" : "text-gray-400"}
+        aria-label={i < filledStars ? "Filled star" : "Empty star"}
       >
         {i < filledStars ? "★" : "☆"}
       </span>
     ));
+  };
+
+  const getFallbackImage = (e) => {
+    e.target.src = "/fallback-image.png";
+    e.target.alt = "Image not available";
   };
 
   return (
@@ -95,26 +101,26 @@ const MenuPage = () => {
                     </Button>
                   </div>
                 </div>
-                <div className="md:w-1/2 flex justify-center overflow-hidden">
+                <div className="md:w-1/2 flex justify-center">
                   {mainImage ? (
                     <motion.img
                       key={mainImage}
-                      src={`http://${BACKEND_HOST}:${BACKEND_PORT}${mainImage}`}
+                      src={mainImage}
                       alt="MenuFy Preview"
-                      className="w-3/4 max-w-sm rounded-xl object-contain cursor-pointer"
+                      className="w-full max-w-md rounded-xl object-contain cursor-pointer"
                       initial={{ x: direction * 100, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: -direction * 100, opacity: 0 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
-                      onError={(e) => (e.target.src = "/fallback-image.png")}
+                      onError={getFallbackImage}
                       onClick={() =>
                         handleImageClick(
-                          menus.find((m) => m.photo === mainImage)._id
+                          menus.find((m) => m.photo === mainImage)?._id
                         )
                       }
                     />
                   ) : (
-                    <div className="w-3/4 max-w-sm h-64 flex items-center justify-center bg-gray-200 rounded-xl">
+                    <div className="w-full max-w-md h-64 flex items-center justify-center bg-gray-200 rounded-xl">
                       <p className="text-gray-500">No image available</p>
                     </div>
                   )}
@@ -123,15 +129,15 @@ const MenuPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
                 {loading ? (
-                  <div className="col-span-full text-center text-white">
+                  <div className="col-span-full text-center text-white" role="alert">
                     Loading menus...
                   </div>
                 ) : error ? (
-                  <div className="col-span-full text-center text-red-500">
+                  <div className="col-span-full text-center text-red-500" role="alert">
                     {error}
                   </div>
                 ) : menus.length === 0 ? (
-                  <div className="col-span-full text-center text-white">
+                  <div className="col-span-full text-center text-white" role="alert">
                     No menus available
                   </div>
                 ) : (
@@ -139,17 +145,15 @@ const MenuPage = () => {
                     <div
                       key={item._id}
                       className="bg-black/10 rounded-xl p-4 backdrop-blur-sm group hover:bg-black/20 transition-all flex flex-col items-center text-center"
-                      onMouseEnter={() => handleHover(item.photo)}
+                      onMouseEnter={() => handleHover(item.photo || null)}
                     >
-                      <div className="w-full aspect-square relative flex justify-center items-center">
+                      <div className="w-full aspect-[4/3] relative flex justify-center items-center">
                         {item.photo ? (
                           <img
-                            src={`http://${BACKEND_HOST}:${BACKEND_PORT}${item.photo}`}
-                            alt={item.name}
+                            src={item.photo} // Use Cloudinary URL directly
+                            alt={item.name || "Menu"}
                             className="w-full h-full object-cover rounded-lg cursor-pointer"
-                            onError={(e) =>
-                              (e.target.src = "/fallback-image.png")
-                            }
+                            onError={getFallbackImage}
                             onClick={() => handleImageClick(item._id)}
                           />
                         ) : (
@@ -161,13 +165,17 @@ const MenuPage = () => {
 
                       <div className="mt-4">
                         <p className="text-sm font-medium text-white">
-                          {item.name}
+                          {item.name || "Unnamed Menu"}
                         </p>
-                        <p className="text-sm text-white">
-                          {item.rate !== undefined && item.rate !== null
-                            ? renderStarRating(item.rate)
-                            : "No rating available"}
-                        </p>
+                        <div className="text-sm text-white">
+                          {item.rate !== undefined && item.rate !== null ? (
+                            <div aria-label={`Rating: ${item.rate} out of 5`}>
+                              {renderStarRating(item.rate)}
+                            </div>
+                          ) : (
+                            <span>No rating available</span>
+                          )}
+                        </div>
                         <div className="mt-3">
                           <QRCodeGenerator menuId={item._id} />
                         </div>

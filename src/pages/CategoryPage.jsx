@@ -26,9 +26,9 @@ const CategoryPage = () => {
         return res.json();
       })
       .then((data) => {
-        setCategories(data);
-        if (data.length > 0 && data[0].photo) {
-          setMainImage(data[0].photo);
+        setCategories(data || []);
+        if (data?.length > 0 && data[0].photo) {
+          setMainImage(data[0].photo); // Use Cloudinary URL directly
         }
         setLoading(false);
       })
@@ -40,7 +40,7 @@ const CategoryPage = () => {
   }, [menuId]);
 
   const handleHover = (newImage) => {
-    if (newImage !== mainImage) {
+    if (newImage !== mainImage && newImage) {
       setDirection(newImage > mainImage ? 1 : -1);
       setMainImage(newImage);
     }
@@ -70,6 +70,11 @@ const CategoryPage = () => {
     setShowPreview(false);
   };
 
+  const getFallbackImage = (e) => {
+    e.target.src = "/fallback-image.png";
+    e.target.alt = "Image not available";
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       <div
@@ -92,6 +97,7 @@ const CategoryPage = () => {
               <button
                 onClick={handleExportPDF}
                 className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full shadow"
+                aria-label="Export PDF"
               >
                 📄 Export PDF
               </button>
@@ -116,18 +122,18 @@ const CategoryPage = () => {
                     </Button>
                   </div>
                 </div>
-                <div className="md:w-1/2 flex justify-center overflow-hidden">
+                <div className="md:w-1/2 flex justify-center">
                   {mainImage ? (
                     <motion.img
                       key={mainImage}
-                      src={`http://${BACKEND_HOST}:${BACKEND_PORT}${mainImage}`}
+                      src={mainImage}
                       alt="Category Preview"
-                      className="w-3/4 max-w-sm rounded-xl object-contain cursor-pointer"
+                      className="w-full max-w-md rounded-xl object-contain cursor-pointer"
                       initial={{ x: direction * 100, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: -direction * 100, opacity: 0 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
-                      onError={(e) => (e.target.src = "/fallback-image.png")}
+                      onError={getFallbackImage}
                       onClick={() =>
                         handleImageClick(
                           categories.find((c) => c.photo === mainImage)?._id
@@ -135,7 +141,7 @@ const CategoryPage = () => {
                       }
                     />
                   ) : (
-                    <div className="w-3/4 max-w-sm h-64 flex items-center justify-center bg-gray-200 rounded-xl">
+                    <div className="w-full max-w-md h-64 flex items-center justify-center bg-gray-200 rounded-xl">
                       <p className="text-gray-500">No image available</p>
                     </div>
                   )}
@@ -143,15 +149,15 @@ const CategoryPage = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
                 {loading ? (
-                  <div className="col-span-full text-center text-white">
+                  <div className="col-span-full text-center text-white" role="alert">
                     Loading categories...
                   </div>
                 ) : error ? (
-                  <div className="col-span-full text-center text-red-500">
+                  <div className="col-span-full text-center text-red-500" role="alert">
                     {error}
                   </div>
                 ) : categories.length === 0 ? (
-                  <div className="col-span-full text-center text-white">
+                  <div className="col-span-full text-center text-white" role="alert">
                     No categories available for this menu
                   </div>
                 ) : (
@@ -159,17 +165,15 @@ const CategoryPage = () => {
                     <div
                       key={category._id}
                       className="bg-black/10 rounded-xl p-4 backdrop-blur-sm group hover:bg-black/20 transition-all flex flex-col items-center text-center"
-                      onMouseEnter={() => handleHover(category.photo)}
+                      onMouseEnter={() => handleHover(category.photo || null)}
                     >
-                      <div className="w-full aspect-square relative flex justify-center items-center">
+                      <div className="w-full aspect-[4/3] relative flex justify-center items-center">
                         {category.photo ? (
                           <img
-                            src={`http://${BACKEND_HOST}:${BACKEND_PORT}${category.photo}`}
-                            alt={category.libelle}
+                            src={category.photo} // Use Cloudinary URL directly
+                            alt={category.libelle || "Category"}
                             className="w-full h-full object-cover rounded-lg cursor-pointer"
-                            onError={(e) =>
-                              (e.target.src = "/fallback-image.png")
-                            }
+                            onError={getFallbackImage}
                             onClick={() => handleImageClick(category._id)}
                           />
                         ) : (
@@ -180,7 +184,7 @@ const CategoryPage = () => {
                       </div>
                       <div className="mt-4">
                         <p className="text-sm font-medium text-white">
-                          {category.libelle}
+                          {category.libelle || "Unnamed Category"}
                         </p>
                         <p className="text-sm text-white">
                           {category.description || "Description not available"}
@@ -193,13 +197,16 @@ const CategoryPage = () => {
             </div>
 
             {showPreview && (
-              <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+              <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50" role="dialog" aria-labelledby="pdf-preview-title">
                 <div className="bg-white p-6 rounded-lg w-full max-w-4xl overflow-y-auto max-h-[90vh]">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold">PDF Preview</h2>
+                    <h2 id="pdf-preview-title" className="text-xl font-semibold">
+                      PDF Preview
+                    </h2>
                     <button
                       onClick={() => setShowPreview(false)}
                       className="text-red-500 font-bold text-lg"
+                      aria-label="Close PDF preview"
                     >
                       ✕
                     </button>
@@ -211,7 +218,7 @@ const CategoryPage = () => {
                     <div className="mb-6">
                       {mainImage && (
                         <img
-                          src={`http://${BACKEND_HOST}:${BACKEND_PORT}${mainImage}`}
+                          src={mainImage}
                           alt="Main Menu"
                           className="w-64 rounded shadow mb-4"
                           crossOrigin="anonymous"
@@ -236,8 +243,8 @@ const CategoryPage = () => {
                             </p>
                             {category.photo && (
                               <img
-                                src={`http://${BACKEND_HOST}:${BACKEND_PORT}${category.photo}`}
-                                alt={category.libelle}
+                                src={category.photo}
+                                alt={category.libelle || "Category"}
                                 className="w-48 h-auto rounded mb-3"
                                 crossOrigin="anonymous"
                               />
@@ -251,6 +258,7 @@ const CategoryPage = () => {
                     <button
                       onClick={confirmDownload}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                      aria-label="Confirm PDF export"
                     >
                       ✅ Export PDF Now
                     </button>
