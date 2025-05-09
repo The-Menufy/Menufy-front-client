@@ -1,4 +1,3 @@
-// 📁 src/pages/ProductPage.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
@@ -11,7 +10,7 @@ const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedVariant, setSelectedVariant] = useState({}); // Store { variantId, portion } per product
+  const [selectedVariant, setSelectedVariant] = useState({});
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -21,7 +20,7 @@ const ProductPage = () => {
         );
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         const data = await res.json();
-        setProducts(data);
+        setProducts(data || []);
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to fetch products");
@@ -38,7 +37,6 @@ const ProductPage = () => {
       [productId]: {
         ...prev[productId],
         variantId,
-        // Reset portion when a new variant is selected; default to the first portion if available
         portion:
           prev[productId]?.variantId === variantId
             ? prev[productId].portion
@@ -55,6 +53,11 @@ const ProductPage = () => {
         portion,
       },
     }));
+  };
+
+  const getFallbackImage = (e) => {
+    e.target.src = "/fallback-image.png";
+    e.target.alt = "Image not available";
   };
 
   return (
@@ -88,9 +91,12 @@ const ProductPage = () => {
                     className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-8 rounded-full"
                     onClick={() =>
                       navigate(
-                        `/category/${products[0]?.categoryFK?.menu || ""}`
+                        products[0]?.categoryFK?.menu
+                          ? `/category/${products[0].categoryFK.menu}`
+                          : "/Menus"
                       )
                     }
+                    disabled={loading || error || products.length === 0}
                   >
                     Back to Categories
                   </Button>
@@ -99,15 +105,15 @@ const ProductPage = () => {
 
               <div className="flex flex-col space-y-10 px-6">
                 {loading ? (
-                  <div className="text-center text-white text-lg">
+                  <div className="text-center text-white text-lg" role="alert">
                     Loading products...
                   </div>
                 ) : error ? (
-                  <div className="text-center text-red-500 text-lg">
+                  <div className="text-center text-red-500 text-lg" role="alert">
                     {error}
                   </div>
                 ) : products.length === 0 ? (
-                  <div className="text-center text-white text-lg">
+                  <div className="text-center text-white text-lg" role="alert">
                     No products available in this category
                   </div>
                 ) : (
@@ -119,15 +125,13 @@ const ProductPage = () => {
                       <div className="w-full lg:w-1/4">
                         {product.photo ? (
                           <img
-                            src={`http://${BACKEND_HOST}:${BACKEND_PORT}${product.photo}`}
-                            alt={product.name}
-                            className="w-full h-56 object-cover rounded-xl"
-                            onError={(e) =>
-                              (e.target.src = "/fallback-image.png")
-                            }
+                            src={product.photo} // Use Cloudinary URL directly
+                            alt={product.name || "Product"}
+                            className="w-full aspect-[4/3] object-cover rounded-xl"
+                            onError={getFallbackImage}
                           />
                         ) : (
-                          <div className="w-full h-56 flex items-center justify-center bg-gray-200 rounded-xl">
+                          <div className="w-full aspect-[4/3] flex items-center justify-center bg-gray-200 rounded-xl">
                             <p className="text-gray-500">No image</p>
                           </div>
                         )}
@@ -136,7 +140,7 @@ const ProductPage = () => {
                       <div className="w-full lg:w-3/4 flex flex-col lg:flex-row gap-8">
                         <div className="w-full lg:w-1/2 text-white space-y-4">
                           <h3 className="text-2xl font-semibold text-yellow-300">
-                            {product.name}
+                            {product.name || "Unnamed Product"}
                           </h3>
                           <p className="text-base text-gray-300">
                             {product.description || "No description"}
@@ -183,24 +187,22 @@ const ProductPage = () => {
                                 >
                                   <label className="flex items-center gap-4">
                                     <input
-                                      type="checkbox" // Changed from "ch" to "checkbox"
+                                      type="checkbox"
                                       checked={
-                                        selectedVariant[product._id]
-                                          ?.variantId === variant._id
+                                        selectedVariant[product._id]?.variantId ===
+                                        variant._id
                                       }
                                       onChange={() => {
                                         if (
-                                          selectedVariant[product._id]
-                                            ?.variantId === variant._id
+                                          selectedVariant[product._id]?.variantId ===
+                                          variant._id
                                         ) {
-                                          // Deselect the variant and clear portion
                                           setSelectedVariant((prev) => {
                                             const newState = { ...prev };
-                                            delete newState[product._id]; // Remove the product entry entirely
+                                            delete newState[product._id];
                                             return newState;
                                           });
                                         } else {
-                                          // Select the variant
                                           handleVariantChange(
                                             product._id,
                                             variant._id
@@ -208,20 +210,18 @@ const ProductPage = () => {
                                         }
                                       }}
                                       className="h-5 w-5 text-yellow-500 border-gray-300 rounded"
+                                      aria-label={`Select variant ${variant.name}`}
                                     />
                                     <div className="flex items-center gap-3">
                                       {variant.images?.[0] && (
                                         <img
-                                          src={`http://${BACKEND_HOST}:${BACKEND_PORT}${variant.images[0]}`}
-                                          alt={variant.name}
-                                          className="w-10 h-10 object-cover rounded-full border-2 border-gray-600"
-                                          onError={(e) =>
-                                            (e.target.src =
-                                              "/fallback-image.png")
-                                          }
+                                          src={variant.images[0]} // Use Cloudinary URL directly
+                                          alt={variant.name || "Variant"}
+                                          className="w-12 h-12 object-cover rounded-full border-2 border-gray-600"
+                                          onError={getFallbackImage}
                                         />
                                       )}
-                                      <span>{variant.name}</span>
+                                      <span>{variant.name || "Unnamed Variant"}</span>
                                     </div>
                                   </label>
                                   {selectedVariant[product._id]?.variantId ===
@@ -237,8 +237,8 @@ const ProductPage = () => {
                                               type="radio"
                                               name={`portion-${product._id}-${variant._id}`}
                                               checked={
-                                                selectedVariant[product._id]
-                                                  ?.portion === portion
+                                                selectedVariant[product._id]?.portion ===
+                                                portion
                                               }
                                               onChange={() =>
                                                 handlePortionChange(
@@ -247,6 +247,7 @@ const ProductPage = () => {
                                                 )
                                               }
                                               className="h-4 w-4 text-yellow-500 border-gray-300 rounded"
+                                              aria-label={`Select portion ${portion}`}
                                             />
                                             <span>{portion}</span>
                                           </label>
