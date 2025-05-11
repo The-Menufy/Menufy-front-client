@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import BlurContainer from "../components/blurContainer";
 import QRCodeGenerator from "../components/QRCodeGenerator";
-import { BACKEND_HOST, BACKEND_PORT } from "../config";
+import { BACKEND_URL } from "../config";
 
 const MenuPage = () => {
   const [menus, setMenus] = useState([]);
@@ -15,7 +15,7 @@ const MenuPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://${BACKEND_HOST}:${BACKEND_PORT}/menu`)
+    fetch(`${BACKEND_URL}menu`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         return res.json();
@@ -129,15 +129,24 @@ const MenuPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
                 {loading ? (
-                  <div className="col-span-full text-center text-white" role="alert">
+                  <div
+                    className="col-span-full text-center text-white"
+                    role="alert"
+                  >
                     Loading menus...
                   </div>
                 ) : error ? (
-                  <div className="col-span-full text-center text-red-500" role="alert">
+                  <div
+                    className="col-span-full text-center text-red-500"
+                    role="alert"
+                  >
                     {error}
                   </div>
                 ) : menus.length === 0 ? (
-                  <div className="col-span-full text-center text-white" role="alert">
+                  <div
+                    className="col-span-full text-center text-white"
+                    role="alert"
+                  >
                     No menus available
                   </div>
                 ) : (

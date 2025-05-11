@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BACKEND_HOST, BACKEND_PORT } from "../config";
+import { BACKEND_URL } from "../config";
 
 const PublicCategoryPage = () => {
   const { menuId } = useParams();
@@ -18,16 +18,12 @@ const PublicCategoryPage = () => {
 
     const fetchData = async () => {
       try {
-        const menuRes = await fetch(
-          `http://${BACKEND_HOST}:${BACKEND_PORT}/menu/${menuId}`
-        );
+        const menuRes = await fetch(`${BACKEND_URL}menu/${menuId}`);
         if (!menuRes.ok) throw new Error("Failed to fetch menu");
         const menuData = await menuRes.json();
         setMenu(menuData);
 
-        const catRes = await fetch(
-          `http://${BACKEND_HOST}:${BACKEND_PORT}/category/menu/${menuId}`
-        );
+        const catRes = await fetch(`${BACKEND_URL}category/menu/${menuId}`);
         if (!catRes.ok) throw new Error("Failed to fetch categories");
         const catData = await catRes.json();
 
@@ -35,7 +31,7 @@ const PublicCategoryPage = () => {
         const categoriesWithProducts = await Promise.all(
           catData.map(async (category) => {
             const prodRes = await fetch(
-              `http://${BACKEND_HOST}:${BACKEND_PORT}/product/category/${category._id}`
+              `${BACKEND_URL}product/category/${category._id}`
             );
             const products = prodRes.ok ? await prodRes.json() : [];
             return { ...category, products };
@@ -70,7 +66,7 @@ const PublicCategoryPage = () => {
       {menu?.photo && (
         <div className="flex justify-center mb-6">
           <img
-            src={`http://${BACKEND_HOST}:${BACKEND_PORT}${menu.photo}`}
+            src={`${BACKEND_URL}${menu.photo}`}
             alt={menu.name}
             className="w-60 h-auto rounded-xl shadow-lg"
           />
@@ -103,7 +99,7 @@ const PublicCategoryPage = () => {
                     >
                       {prod.photo && (
                         <img
-                          src={`http://${BACKEND_HOST}:${BACKEND_PORT}${prod.photo}`}
+                          src={`${BACKEND_URL}${prod.photo}`}
                           alt={prod.name}
                           className="w-full h-40 object-cover rounded-md mb-3"
                         />

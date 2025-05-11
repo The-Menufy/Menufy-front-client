@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Button from "../components/Button";
 import BlurContainer from "../components/blurContainer";
 import { Link } from "react-router-dom";
-import { BACKEND_HOST, BACKEND_PORT } from "../config";
+import { BACKEND_URL } from "../config";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
@@ -17,7 +17,7 @@ const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    fetch(`http://${BACKEND_HOST}:${BACKEND_PORT}/product`)
+    fetch(`${BACKEND_URL}product`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
@@ -28,7 +28,9 @@ const HomePage = () => {
         setProducts(data || []);
         setFilteredProducts(data || []);
         // Extract unique typePlat values
-        const uniqueTypePlats = [...new Set((data || []).map((product) => product.typePlat))].filter(Boolean);
+        const uniqueTypePlats = [
+          ...new Set((data || []).map((product) => product.typePlat)),
+        ].filter(Boolean);
         setTypePlatOptions(uniqueTypePlats);
         if (data?.length > 0 && data[0].photo) {
           setMainImage(data[0].photo); // Use Cloudinary URL directly
@@ -161,15 +163,24 @@ const HomePage = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
                 {loading ? (
-                  <div className="col-span-full text-center text-white" role="alert">
+                  <div
+                    className="col-span-full text-center text-white"
+                    role="alert"
+                  >
                     Loading products...
                   </div>
                 ) : error ? (
-                  <div className="col-span-full text-center text-red-500" role="alert">
+                  <div
+                    className="col-span-full text-center text-red-500"
+                    role="alert"
+                  >
                     {error}
                   </div>
                 ) : filteredProducts.length === 0 ? (
-                  <div className="col-span-full text-center text-white" role="alert">
+                  <div
+                    className="col-span-full text-center text-white"
+                    role="alert"
+                  >
                     No products available
                   </div>
                 ) : (

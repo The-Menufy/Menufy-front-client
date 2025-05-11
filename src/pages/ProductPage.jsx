@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import BlurContainer from "../components/blurContainer";
-import { BACKEND_HOST, BACKEND_PORT } from "../config";
+import { BACKEND_URL } from "../config";
 
 const ProductPage = () => {
   const { categoryId } = useParams();
@@ -15,9 +15,7 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(
-          `http://${BACKEND_HOST}:${BACKEND_PORT}/product/category/${categoryId}`
-        );
+        const res = await fetch(`${BACKEND_URL}product/category/${categoryId}`);
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         const data = await res.json();
         setProducts(data || []);
@@ -109,7 +107,10 @@ const ProductPage = () => {
                     Loading products...
                   </div>
                 ) : error ? (
-                  <div className="text-center text-red-500 text-lg" role="alert">
+                  <div
+                    className="text-center text-red-500 text-lg"
+                    role="alert"
+                  >
                     {error}
                   </div>
                 ) : products.length === 0 ? (
@@ -189,13 +190,13 @@ const ProductPage = () => {
                                     <input
                                       type="checkbox"
                                       checked={
-                                        selectedVariant[product._id]?.variantId ===
-                                        variant._id
+                                        selectedVariant[product._id]
+                                          ?.variantId === variant._id
                                       }
                                       onChange={() => {
                                         if (
-                                          selectedVariant[product._id]?.variantId ===
-                                          variant._id
+                                          selectedVariant[product._id]
+                                            ?.variantId === variant._id
                                         ) {
                                           setSelectedVariant((prev) => {
                                             const newState = { ...prev };
@@ -221,7 +222,9 @@ const ProductPage = () => {
                                           onError={getFallbackImage}
                                         />
                                       )}
-                                      <span>{variant.name || "Unnamed Variant"}</span>
+                                      <span>
+                                        {variant.name || "Unnamed Variant"}
+                                      </span>
                                     </div>
                                   </label>
                                   {selectedVariant[product._id]?.variantId ===
@@ -237,8 +240,8 @@ const ProductPage = () => {
                                               type="radio"
                                               name={`portion-${product._id}-${variant._id}`}
                                               checked={
-                                                selectedVariant[product._id]?.portion ===
-                                                portion
+                                                selectedVariant[product._id]
+                                                  ?.portion === portion
                                               }
                                               onChange={() =>
                                                 handlePortionChange(

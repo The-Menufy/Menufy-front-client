@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import BlurContainer from "../components/blurContainer";
-import { BACKEND_HOST, BACKEND_PORT } from "../config";
+import { BACKEND_URL } from "../config";
 import html2pdf from "html2pdf.js";
 
 const CategoryPage = () => {
@@ -18,7 +18,7 @@ const CategoryPage = () => {
   const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
-    fetch(`http://${BACKEND_HOST}:${BACKEND_PORT}/category/menu/${menuId}`)
+    fetch(`${BACKEND_URL}category/menu/${menuId}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
@@ -149,15 +149,24 @@ const CategoryPage = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
                 {loading ? (
-                  <div className="col-span-full text-center text-white" role="alert">
+                  <div
+                    className="col-span-full text-center text-white"
+                    role="alert"
+                  >
                     Loading categories...
                   </div>
                 ) : error ? (
-                  <div className="col-span-full text-center text-red-500" role="alert">
+                  <div
+                    className="col-span-full text-center text-red-500"
+                    role="alert"
+                  >
                     {error}
                   </div>
                 ) : categories.length === 0 ? (
-                  <div className="col-span-full text-center text-white" role="alert">
+                  <div
+                    className="col-span-full text-center text-white"
+                    role="alert"
+                  >
                     No categories available for this menu
                   </div>
                 ) : (
@@ -197,10 +206,17 @@ const CategoryPage = () => {
             </div>
 
             {showPreview && (
-              <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50" role="dialog" aria-labelledby="pdf-preview-title">
+              <div
+                className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50"
+                role="dialog"
+                aria-labelledby="pdf-preview-title"
+              >
                 <div className="bg-white p-6 rounded-lg w-full max-w-4xl overflow-y-auto max-h-[90vh]">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 id="pdf-preview-title" className="text-xl font-semibold">
+                    <h2
+                      id="pdf-preview-title"
+                      className="text-xl font-semibold"
+                    >
                       PDF Preview
                     </h2>
                     <button
