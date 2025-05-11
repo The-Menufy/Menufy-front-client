@@ -1,6 +1,6 @@
 # Menu Management - Frontend Client App
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/YOUR_NETLIFY_BADGE_ID/deploy-status)](https://menufy-frontend-client.netlify.app/)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5fd65824-6676-4a63-9c01-3f796145f145/deploy-status)](https://menufy-frontend-client.netlify.app/)
 
 Welcome to the **Menu Management Frontend Client App**, part of the **ThemenufyEspritPITwin2025** project. This app serves as the frontend interface for managing menus, categories, and products in a user-friendly and efficient way. 
 
