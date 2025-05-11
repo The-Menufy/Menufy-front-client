@@ -81,7 +81,7 @@ VITE_BACKEND_URL=http://localhost:5000
 ---
 
 ## 🖼️ Preview
-![App Screenshot](https://via.placeholder.com/1200x600?text=Insert+Screenshot+Here)
+![App Screenshot](https://img001.prntscr.com/file/img001/x5ufDz3qSD-GRPuqcwBPfQ.png)
 
 ---
 
